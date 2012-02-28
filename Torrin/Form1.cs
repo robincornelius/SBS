@@ -191,7 +191,7 @@ namespace Torrin
            }
 
             numericUpDown_value.Enabled = true;
-            numericUpDown_parameter.Enabled.Enabled = true;
+            numericUpDown_parameter.Enabled = true;
             button3.Enabled = true;
             button4.Enabled = true;
 
