@@ -130,8 +130,15 @@ namespace Torrin
 
             port = new SerialPort(comboBox1.SelectedItem.ToString(), 9600, Parity.None, 8, StopBits.One);
 
-            port.Open();
-
+            try
+            {
+                port.Open();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
             writemsg("Port open sending *");
             byte ret = (byte)1;
             while (ret != (byte)0)
@@ -183,12 +190,7 @@ namespace Torrin
             textBox1.Text += string.Format("Memory 0x{0:X} is {1}\r\n", 0x4353, result);
             */
 
-
-            for (int p = 0; p < 36; p++)
-            {
-                int val = getpar(p);
-                textBox1.Text += string.Format("Parameter {0} is {1}\r\n", p, val);
-           }
+            reloadparamaters();
 
             numericUpDown_value.Enabled = true;
             numericUpDown_parameter.Enabled = true;
@@ -198,10 +200,35 @@ namespace Torrin
 
         }
 
+        void reloadparamaters()
+        {
+            textBox1.Clear();
+
+            int error = getpar(45);
+
+            if (error == 0)
+                writemsg("No errors logged");
+            else
+            {
+                writemsg(string.Format("Last error was {0}", error));
+            }
+
+            for (int p = 0; p < 39; p++)
+            {
+                int val = getpar(p);
+                textBox1.Text += string.Format("Parameter {0} is {1}\r\n", p, val);
+            }
+
+        }
+
         // Print a debug message to the text box
         private void writemsg(string msg)
         {
             textBox_dataout.Text += msg + "\r\n";
+
+            textBox_dataout.SelectionStart = textBox_dataout.Text.Length;
+            textBox_dataout.ScrollToCaret();
+            textBox_dataout.Refresh();
         }
 
 
@@ -234,7 +261,7 @@ namespace Torrin
             byte[] ret = new byte[1];
 
             port.Write(dout,0,1);
-            writemsg(string.Format("TX {0:X}",(int)dataout));
+            //writemsg(string.Format("TX {0:X}",(int)dataout));
             Application.DoEvents();
             port.ReadTimeout = 5000;
 
@@ -243,7 +270,7 @@ namespace Torrin
                 port.Read(ret, 0, 1);
                 reply = ret[0];
                 int x = (int)reply;
-                writemsg(string.Format("RX {0:X}", x));
+                //writemsg(string.Format("RX {0:X}", x));
                 Application.DoEvents();
             }
             catch
@@ -252,7 +279,7 @@ namespace Torrin
                 return false;
             }
 
-            System.Threading.Thread.Sleep(100);
+           // System.Threading.Thread.Sleep(100);
 
 
             return true;
@@ -387,15 +414,26 @@ namespace Torrin
        
         }
 
+        private void executefunction(int fn)
+        {
+            int ad = baseaddr + fn * 2;
+            ad = fromHL(readmem(ad + 1), readmem(ad));
+            readmem(ad);
+
+            byte dret, sret;
+            docmd(41, 0, out dret, out sret);
+
+        }
+
         private void button4_Click(object sender, EventArgs e)
         {
 
             writemsg(string.Format("\n Saving to E2"));
 
             setpar(39, 0); //saving handshake register
-            byte dret, sret;
-            docmd(41, 0, out dret, out sret);
 
+            executefunction(37); //save to e2
+         
             while (getpar(39) == 0)
             {
                 writemsg(string.Format("\n Waiting for OK handshake"));
@@ -403,6 +441,11 @@ namespace Torrin
             }
 
             writemsg(string.Format("\n Save complete!"));
+        }
+
+        private void button_reload_Click(object sender, EventArgs e)
+        {
+            reloadparamaters();
         }
 
     }

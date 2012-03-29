@@ -39,6 +39,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.numericUpDown_value = new System.Windows.Forms.NumericUpDown();
             this.button4 = new System.Windows.Forms.Button();
+            this.button_reload = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_parameter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_value)).BeginInit();
             this.SuspendLayout();
@@ -150,11 +151,22 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // button_reload
+            // 
+            this.button_reload.Location = new System.Drawing.Point(337, 40);
+            this.button_reload.Name = "button_reload";
+            this.button_reload.Size = new System.Drawing.Size(108, 20);
+            this.button_reload.TabIndex = 20;
+            this.button_reload.Text = "Reload params";
+            this.button_reload.UseVisualStyleBackColor = true;
+            this.button_reload.Click += new System.EventHandler(this.button_reload_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(596, 503);
+            this.Controls.Add(this.button_reload);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.numericUpDown_value);
             this.Controls.Add(this.label3);
@@ -189,6 +201,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown numericUpDown_value;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button_reload;
     }
 }
 
